@@ -11,7 +11,7 @@ class StudentController:
     # HELPER METHODS:
 
     # create new map with scale factor of 6 for full res.
-    def create_c_space(map, obstacles, cell_resolution=0.0833):
+    def create_c_space(self, map, obstacles, cell_resolution=0.0833):
         
         grid_array = np.array(map)
     
@@ -33,18 +33,23 @@ class StudentController:
         # 3 cells of padding from center on all sides (7x7)
         pad = 3
 
-        for (obs_x, obs_y) in obstacles:
+        # obstacle plotting
+        for obstacle in obstacles:
+            # unpack obs coord
+            obs_x = obstacle[0]
+            obs_y = obstacle[1] 
+
             # offset origin to bottom left corner
             dist_x  = obs_x - x_min
             dist_y = y_max - obs_y
 
-            # calculate index
-            col = np.floor(dist_x / cell_resolution)
-            row = np.floor(dist_y / cell_resolution)
+            # calculate index, casting to int for array slicing
+            col = int(np.floor(dist_x / cell_resolution))
+            row = int(np.floor(dist_y / cell_resolution))
 
             # define 7x7 bounding box and clip for out of bounds errors
             r_start = max(0, row - pad)
-            r_end = min(c_space.shape[0], col + pad +1)
+            r_end = min(c_space.shape[0], row + pad + 1) # Fixed: changed col to row
             c_start = max(0, col - pad)
             c_end = min(c_space.shape[1], col + pad + 1)
 
@@ -74,8 +79,6 @@ class StudentController:
         map = sensors["map"]
         goal = sensors["goal"]
         obstacles = sensors["obstacles"]
-
-        print(type(map))
 
         c_space = self.create_c_space(map, obstacles)    
         print(c_space)    
